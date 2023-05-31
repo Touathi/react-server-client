@@ -1,25 +1,41 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import axios from 'axios';
+import CreatureList from '../CreatureList/CreatureList';
+import CreatureForm from '../CreatureForm/CreatureForm';
 
 function App () {
  
-  const [creatureList, setCreatureList] = useState([
-    {name :'Unicorn', origin: 'Britain'},
-    {name : 'Sphinx', origin: 'Egypt'},
-    {name: 'Jackalope', origin: 'America'}
-  ]);
+  const [creatureList, setCreatureList] = useState( [] );
+
+
+  // axios GET
+  const fetchCreatures = () => {
+    axios.get('/creature')
+    .then ( response => {
+      console.log(response.data);
+      setCreatureList(response.data);
+    })
+    .catch ( err => {
+      console.log(err);
+    })
+  }
+
+  useEffect( () => {
+    fetchCreatures();
+  }, []) // run once and never again
+
+
   
+
   return (
     <div>
-      <ul>
-        {creatureList.map(creature => (
-          <li key={creature.name}>
-            {creature.name} is from {creature.origin}
-          </li>
-        ))}
-      </ul>
+      <CreatureForm 
+      fetchCreatures={fetchCreatures}/>
+      <CreatureList 
+        creatureList={creatureList}/>
     </div>
   );
+  }
 
-}
 
 export default App
